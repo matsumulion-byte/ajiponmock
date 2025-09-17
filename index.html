@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>味ぽん文字モック</title>
-  <!-- Google Fonts (例: Kosugi Maru = まるっこい和文) -->
+  <!-- Google Fonts (例: Kosugi Maru) -->
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
 
   <style>
@@ -32,12 +32,12 @@
 
     #textLayer {
       position: absolute;
-      top: 50%;
+      top: 40%; /* ← 上に配置する */
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 48px;
-      font-weight: bold;
-      color: #000;
+      font-size: 56px;       /* 少し大きめ */
+      font-weight: 900;      /* 太字 */
+      color: red;            /* 赤文字 */
       text-align: center;
       white-space: nowrap;
     }
@@ -49,25 +49,4 @@
   </style>
 </head>
 <body>
-  <h1>味ぽん文字モック</h1>
-  <input id="textInput" placeholder="ひらがな1〜2文字" maxlength="2" />
-  
-  <div id="preview">
-    <!-- シール台紙画像 -->
-    <img src="base.png" alt="台紙" />
-    <!-- 入力文字 -->
-    <div id="textLayer"></div>
-  </div>
-
-  <script>
-    const input = document.getElementById("textInput");
-    const textLayer = document.getElementById("textLayer");
-
-    input.addEventListener("input", () => {
-      let value = input.value.replace(/[^ぁ-ん]/g, "").slice(0, 2);
-      input.value = value;
-      textLayer.textContent = value ? value + "ぽん" : "";
-    });
-  </script>
-</body>
-</html>
+  <h1>味
