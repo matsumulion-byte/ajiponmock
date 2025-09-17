@@ -3,50 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <title>味ぽん文字モック</title>
-  <!-- Google Fonts (例: Kosugi Maru) -->
-  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+
+  <!-- 極太ウェイトがある和文Webフォント -->
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: #fff8f0;
-      font-family: 'Kosugi Maru', sans-serif;
+    body{
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      height:100vh; background:#fff8f0; font-family:'M PLUS Rounded 1c', system-ui, sans-serif;
     }
+    h1{ margin:0 0 12px; }
+    input{ font-size:20px; padding:6px 10px; }
 
-    #preview {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      margin-top: 20px;
+    /* 台紙エリア */
+    #preview{
+      position:relative; width:300px; height:300px; margin-top:20px;
     }
+    #preview img{ width:100%; height:100%; object-fit:cover; }
 
-    #preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    #textLayer {
-      position: absolute;
-      top: 40%; /* ← 上に配置する */
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 56px;       /* 少し大きめ */
-      font-weight: 900;      /* 太字 */
-      color: red;            /* 赤文字 */
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    input {
-      font-size: 20px;
-      padding: 6px;
+    /* テキスト（もっと上＋赤＋極太） */
+    #textLayer{
+      position:absolute;
+      top:28%;                 /* ← さらに上へ（必要なら 25% まで上げてもOK） */
+      left:50%;
+      transform:translate(-50%, -50%);
+      font-size:60px;          /* 1〜2文字想定の基準サイズ */
+      line-height:1;
+      font-weight:900;         /* 極太（このフォントは900を持っています） */
+      color:#d60000;           /* 味ぽん系の濃い赤寄り */
+      white-space:nowrap;
+      text-align:center;
     }
   </style>
 </head>
 <body>
-  <h1>味
+  <h1>味ぽん文字モック</h1>
+  <input id="textInput" placeholder="ひらがな1〜2文字" maxlength="2" />
+
+  <div id="preview">
+    <img src="base.png" alt="台紙" />
+    <div id="textLayer"></div>
+  </div>
+
+  <script>
+    const input = document.getElementById('textInput');
+    const textLayer = document.getElementById('textLayer');
+
+    let composing = false;
+
+    input.addEventListener('compositionstart', () => { composing = true; });
+    input.addEventListener('compositionend', (e) => {
+      composing = false;
+      sanitizeAndRender(e.target.value);
+    });
+
+    input.addEventListener('input', (e) => {
+      // 変換中は手を出さない（IMEの途中文字を壊さない）
+      if (e.isComposing || composing) return;
+      sanitizeAndRender(e.target.value);
+    });
+
+    function sanitizeAndRender(raw){
+      // NFCで濁点合成（例：か + ゙ → が）
+      let v = (raw || '').normalize('NFC');
+
+      // ひらがなレンジと記号の許可
+      // \u3041-\u3096: ぁ〜ゖ, \u309B\u309C: ゛゜, \u309D-\u309F: ゝゞゟ, ー: 長音
+      v = v.replace(/[^\u3041-\u3096\u309B\u309C\u309D-\u309Fー]/g, '');
+
+      // 最大2文字
+      v = v.slice(0, 2);
+
+      if (input.value !== v) input.value = v;
+      textLayer.textContent = v ? v + 'ぽん' : '';
+    }
+  </script>
+</body>
+</html>
